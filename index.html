@@ -35,14 +35,15 @@
 <em>Nun zur Messung</em>
 </li>
 <li>Euer Programm mit <code>-g</code> (debug)  kompillieren, ruhig auch <code>-O3</code> verwenden.</li>
-<li>Das Programm mit <strong>trace</strong> aufnehmen:</li>
+<li>Das Programm mit <strong>trace</strong> aufnehmen. Hierbei kann man verschiedene Events mit <code>-e event@period</code> messen. Die verfügbaren Events sind unter <code>hpcrun -l</code> zu finden.</li>
 </ol>
 
-<pre><code>  $hpcrun -t  ./&lt;program&gt;
+<pre><code>  $hpcrun -t -e event@period  ./&lt;program&gt;
 </code></pre>
 
-<p>Hierbei kann man verschiedene Events mit <code>-e event@period</code> messen. Die verfügbaren Events sind unter <code>hpcrun -l</code> yu finden.
-4. Programmstruktur ermitteln:</p>
+<ol>
+<li>Programmstruktur ermitteln:</li>
+</ol>
 
 <pre><code>  $hpcstruct &lt;program&gt;
 </code></pre>
