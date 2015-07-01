@@ -59,6 +59,79 @@ Profile-Database zusammenstellen:</li>
 <ol>
 <li>Den Datenbankordner mit hpcviever und hpctraceviewer anschauen!</li>
 </ol>
+
+<h1>
+<a id="perf-numa" class="anchor" href="#perf-numa" aria-hidden="true"><span class="octicon octicon-link"></span></a>perf numa</h1>
+
+<p>Because there is no documentation, I try to understand the Code.</p>
+
+<h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<h4>
+<a id="threads" class="anchor" href="#threads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Threads</h4>
+
+<p>-p --nr_proc ( number of processes)
+-t --nr_threads (number of threads per process)</p>
+
+<h4>
+<a id="data-amount" class="anchor" href="#data-amount" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Amount</h4>
+
+<p>-G --mb_global MB  (global  memory (MBs))
+-P --mb_proc MB    (process memory (MBs))
+-L --mb_proc_locked MB (   process serialized/locked memory access (MBs)&lt;= process_memory)
+-T --mb_thread MB   (thread  memory (MBs))</p>
+
+<h4>
+<a id="benchmark-duration" class="anchor" href="#benchmark-duration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Benchmark Duration</h4>
+
+<p>-l --nr_loops (max number of loops to run)
+-s --nr_secs (max number of seconds to run)
+-u --usleep (usecs to sleep per loop iteration)</p>
+
+<h4>
+<a id="data-access" class="anchor" href="#data-access" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data-Access</h4>
+
+<p>-R --data_reads (access the data via writes (can be mixed with -W))
+-W --data_writes (access the data via writes (can be mixed with -R))
+-B --data_backwards (access the data backwards as well)
+-Z --data_zero_memset (access the data via glibc bzero only)
+-r --data_rand_walk (access the data with random (32bit LFSR) walk)</p>
+
+<pre><code>#define BIT(x) (1ul &lt;&lt; x)
+static inline uint32_t lfsr_32(uint32_t lfsr)
+{
+    const uint32_t taps = BIT(1) | BIT(5) | BIT(6) | BIT(31);
+    return (lfsr&gt;&gt;1) ^ ((0x0u - (lfsr &amp; 0x1u)) &amp; taps);
+}
+</code></pre>
+
+<h4>
+<a id="data-init" class="anchor" href="#data-init" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data-Init</h4>
+
+<p>-z --init_zero (bzero the initial allocations)
+-I --init_random (randomize the contents of the initial allocations)
+-0 --init_cpu0 (do the initial allocations on CPU#0)
+-x --perturb_secs (perturb thread 0/0 every X secs to test convergence stability)</p>
+
+<h4>
+<a id="misc" class="anchor" href="#misc" aria-hidden="true"><span class="octicon octicon-link"></span></a>Misc</h4>
+
+<p><strong>-d --show_details (Show details)</strong>
+-a --all (Run all tests in the suite)
+-H --thp (MADV_NOHUGEPAGE &lt; 0 &lt; MADV_HUGEPAGE)
+-c --show_convergence (show convergence details)
+-m --measure_convergence (measure convergence latency)
+-q --quiet (bzero the initial allocations)
+-S --serialize-startup (serialize thread startup)</p>
+
+<h4>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+
+<pre><code>perf bench numa mem -p 4 -t 4 -P 1024 -C 0 -M 0 -s 20 -zZq --thp 1 -d
+</code></pre>
+
+<p>measures with <strong>4 processors</strong> and <strong>4 threads each</strong>.<strong>1024 MB</strong> of data are measured for <strong>20secs</strong>, <strong>Zero-initialized</strong>, accessed via <strong>glibc bzero</strong> with <strong>1GB [THP] <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Performance_Tuning_Guide/s-memory-transhuge.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Performance_Tuning_Guide/s-memory-transhuge.html</a></strong> in <strong>debug mode</strong>.</p>
       </section>
       <footer>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
